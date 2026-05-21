@@ -22,8 +22,24 @@ Cada processo exibe seu **PID** no terminal, evidenciando que são processos dis
 
 ---
 
-## Arquitetura
+## Descritivo do Programa
 
+**O que é?**
+Um sistema distribuído onde duas máquinas virtuais Linux se comunicam via socket TCP. O client envia parâmetros de processamento ao server, que utiliza múltiplos processos em paralelo para executar o cálculo e retorna o resultado.
+
+**Como funciona?**
+O server aguarda conexão na porta 5000. Ao receber os parâmetros `range1` e `range2` do client, cria dois processos independentes com `multiprocessing.Process`. Cada processo executa uma contagem em paralelo e armazena seu resultado em uma variável de memória compartilhada (`multiprocessing.Value`). Após ambos finalizarem, o server soma os valores e envia o resultado ao client via socket.
+
+**Por que isso é distribuído?**
+O processamento acontece no server (VM 1) enquanto o client (VM 2) apenas envia os parâmetros e aguarda o resultado, caracterizando a divisão de responsabilidades entre máquinas distintas em uma rede.
+
+**Tecnologias utilizadas**
+- `multiprocessing.Process` — criação de processos filhos paralelos
+- `multiprocessing.Value` — memória compartilhada entre processos
+- `socket TCP` — comunicação entre as duas máquinas virtuais
+- `Vagrant + VirtualBox` — provisionamento das VMs Linux
+
+---
 ```
 ┌─────────────────────┐        socket TCP         ┌─────────────────────────┐
 │   CLIENT VM         │ ────────────────────────> │   SERVER VM             │
